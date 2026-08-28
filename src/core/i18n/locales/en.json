@@ -1,0 +1,106 @@
+{
+  "tabs": {
+    "home": "Home",
+    "posts": "Posts",
+    "settings": "Settings"
+  },
+  "common": {
+    "retry": "Retry",
+    "loading": "Loading…",
+    "goHome": "Back to Home"
+  },
+  "errors": {
+    "generic": "Something went wrong."
+  },
+  "home": {
+    "title": "Welcome",
+    "subtitle": "Mobile template — Expo, feature-based architecture.",
+    "cardTitle": "Ready to build",
+    "cardBody": "Theming, i18n, storage and navigation are wired. The API layer and the features come next.",
+    "blocks": {
+      "theme": {
+        "title": "Token-driven theming",
+        "body": "One ThemeColors interface, two palettes, zero hardcoded hex in components."
+      },
+      "i18n": {
+        "title": "i18n from day one",
+        "body": "i18next wired to the device language, with a persisted manual override."
+      },
+      "storage": {
+        "title": "Synchronous storage",
+        "body": "MMKV behind a facade, read on boot: no hydration flash."
+      },
+      "navigation": {
+        "title": "Three layouts",
+        "body": "Classic tabs, floating island or sidebar, switchable from the settings screen."
+      },
+      "api": {
+        "title": "A minimal API layer",
+        "body": "A fetch wrapper with timeouts, one normalized ApiError and parsing at the boundary."
+      },
+      "tests": {
+        "title": "Tests and quality gates",
+        "body": "Jest, ESLint and strict TypeScript behind a single target: make check."
+      }
+    }
+  },
+  "posts": {
+    "title": "Posts",
+    "empty": "No posts yet.",
+    "detailTitle": "Post {{id}}"
+  },
+  "settings": {
+    "title": "Settings",
+    "appearance": "Appearance",
+    "appearanceHint": "Choose a theme, or follow the system appearance.",
+    "theme": {
+      "system": "System",
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "language": "Language",
+    "languageHint": "Choose a language, or follow the device language.",
+    "locale": {
+      "system": "Device",
+      "en": "English",
+      "fr": "Français"
+    },
+    "layout": {
+      "label": "Navigation layout",
+      "hint": "Switching layouts remounts the navigation.",
+      "tabs": "Classic tabs",
+      "island": "Floating island",
+      "sidebar": "Sidebar",
+      "assistant": "Assistant + threads"
+    }
+  },
+  "assistant": {
+    "title": "Assistant",
+    "welcome": "How can I help?",
+    "intro": "Start a conversation or resume one from the side panel.",
+    "newThread": "New conversation",
+    "recent": "Recent",
+    "appSection": "Application",
+    "suggestions": {
+      "plan": "Help me plan my week",
+      "explain": "Explain a complex topic simply",
+      "draft": "Draft a professional message"
+    },
+    "composer": {
+      "placeholder": "Write a message…",
+      "send": "Send message",
+      "stop": "Stop response",
+      "addImage": "Add images",
+      "removeAttachment": "Remove attachment",
+      "attachmentErrorTitle": "Image not added",
+      "attachmentErrorBody": "This image could not be prepared. Try a different photo."
+    },
+    "message": {
+      "retry": "Regenerate response"
+    }
+  },
+  "notFound": {
+    "title": "Page not found",
+    "message": "This screen does not exist."
+  }
+}

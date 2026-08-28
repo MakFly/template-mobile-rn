@@ -1,0 +1,106 @@
+{
+  "tabs": {
+    "home": "Accueil",
+    "posts": "Articles",
+    "settings": "Réglages"
+  },
+  "common": {
+    "retry": "Réessayer",
+    "loading": "Chargement…",
+    "goHome": "Retour à l'accueil"
+  },
+  "errors": {
+    "generic": "Une erreur est survenue."
+  },
+  "home": {
+    "title": "Bienvenue",
+    "subtitle": "Template mobile — Expo, architecture par features.",
+    "cardTitle": "Prêt à construire",
+    "cardBody": "Thème, i18n, stockage et navigation sont branchés. La couche API et les features arrivent ensuite.",
+    "blocks": {
+      "theme": {
+        "title": "Thème par tokens",
+        "body": "Une interface ThemeColors, deux palettes, zéro hexadécimal en dur dans les composants."
+      },
+      "i18n": {
+        "title": "i18n dès le départ",
+        "body": "i18next branché sur la langue de l'appareil, avec bascule manuelle persistée."
+      },
+      "storage": {
+        "title": "Stockage synchrone",
+        "body": "MMKV derrière une façade, lu au démarrage : pas de flash d'hydratation."
+      },
+      "navigation": {
+        "title": "Trois dispositions",
+        "body": "Onglets classiques, îlot flottant ou panneau latéral, commutables depuis les réglages."
+      },
+      "api": {
+        "title": "Couche API minimale",
+        "body": "Un wrapper fetch avec timeout, une ApiError normalisée et le parsing à la frontière."
+      },
+      "tests": {
+        "title": "Tests et qualité",
+        "body": "Jest, ESLint et TypeScript strict câblés dans une seule cible : make check."
+      }
+    }
+  },
+  "posts": {
+    "title": "Articles",
+    "empty": "Aucun article pour l'instant.",
+    "detailTitle": "Article {{id}}"
+  },
+  "settings": {
+    "title": "Réglages",
+    "appearance": "Apparence",
+    "appearanceHint": "Choisissez un thème, ou suivez l'apparence du système.",
+    "theme": {
+      "system": "Système",
+      "light": "Clair",
+      "dark": "Sombre"
+    },
+    "language": "Langue",
+    "languageHint": "Choisissez une langue, ou suivez celle de l'appareil.",
+    "locale": {
+      "system": "Appareil",
+      "en": "English",
+      "fr": "Français"
+    },
+    "layout": {
+      "label": "Disposition de navigation",
+      "hint": "Changer de disposition remonte la navigation.",
+      "tabs": "Onglets classiques",
+      "island": "Îlot flottant",
+      "sidebar": "Panneau latéral",
+      "assistant": "Assistant + discussions"
+    }
+  },
+  "assistant": {
+    "title": "Assistant",
+    "welcome": "Comment puis-je vous aider ?",
+    "intro": "Démarrez une discussion ou reprenez-en une depuis le panneau latéral.",
+    "newThread": "Nouvelle discussion",
+    "recent": "Récentes",
+    "appSection": "Application",
+    "suggestions": {
+      "plan": "Aide-moi à organiser ma semaine",
+      "explain": "Explique-moi un sujet complexe simplement",
+      "draft": "Rédige un message professionnel"
+    },
+    "composer": {
+      "placeholder": "Écrivez un message…",
+      "send": "Envoyer le message",
+      "stop": "Arrêter la réponse",
+      "addImage": "Ajouter des images",
+      "removeAttachment": "Retirer la pièce jointe",
+      "attachmentErrorTitle": "Image non ajoutée",
+      "attachmentErrorBody": "Impossible de préparer cette image. Réessayez avec une autre photo."
+    },
+    "message": {
+      "retry": "Régénérer la réponse"
+    }
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "message": "Cet écran n'existe pas."
+  }
+}

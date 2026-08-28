@@ -1,0 +1,15 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    // TS 6 n'inclut plus node_modules/@types automatiquement : jest est requis
+    // pour les globals de jest.setup.ts (expo/types arrive via expo-env.d.ts).
+    "types": ["jest"],
+    "paths": {
+      "@/*": ["./src/*"],
+      "@/assets/*": ["./assets/*"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
+}

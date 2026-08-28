@@ -1,0 +1,47 @@
+# dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# generated native folders (CNG)
+ios/
+android/
+
+# tests
+coverage/
+
+# env files (keep .env.example versioned)
+.env*
+!.env.example
+
+# logs
+*.log
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# Native
+.kotlin/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Metro
+.metro-health-check*
+
+# macOS
+.DS_Store
+*.pem
+
+# Playwright MCP artifacts
+.playwright-mcp/
+
+# typescript
+*.tsbuildinfo

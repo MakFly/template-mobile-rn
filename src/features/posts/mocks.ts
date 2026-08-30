@@ -1,4 +1,4 @@
-import { ApiError } from '@/core/api';
+import { HttpException } from '@/core/api';
 
 import type { Post } from './api';
 
@@ -33,7 +33,7 @@ export const mockPosts: Post[] = [
   {
     id: 5,
     title: 'A fetch wrapper in 100 lines',
-    body: 'Timeouts with AbortController, one normalized ApiError, and zod parsing at the boundary: everything axios gave us, without the dependency.',
+    body: 'Timeouts with AbortController, typed exceptions, and zod parsing at the boundary: everything axios gave us, without the dependency.',
   },
   {
     id: 6,
@@ -67,7 +67,10 @@ export async function getMockPost(id: string): Promise<Post> {
   const post = mockPosts.find((candidate) => String(candidate.id) === id);
   if (!post) {
     // Same failure shape as the real API so screens handle one error type.
-    throw new ApiError('http', `Mock post ${id} not found`, { status: 404 });
+    throw new HttpException(`Mock post ${id} not found`, {
+      status: 404,
+      request: { method: 'GET', path: `/posts/${id}` },
+    });
   }
   return post;
 }

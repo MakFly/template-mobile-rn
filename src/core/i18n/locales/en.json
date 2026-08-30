@@ -1,6 +1,8 @@
 {
   "tabs": {
-    "home": "Home",
+    "home": "Assistant",
+    "assistant": "Assistant",
+    "threads": "Threads",
     "posts": "Posts",
     "settings": "Settings"
   },
@@ -36,7 +38,7 @@
       },
       "api": {
         "title": "A minimal API layer",
-        "body": "A fetch wrapper with timeouts, one normalized ApiError and parsing at the boundary."
+        "body": "A fetch wrapper with timeouts, typed exceptions and parsing at the boundary."
       },
       "tests": {
         "title": "Tests and quality gates",
@@ -96,7 +98,29 @@
       "attachmentErrorBody": "This image could not be prepared. Try a different photo."
     },
     "message": {
-      "retry": "Regenerate response"
+      "retry": "Regenerate response",
+      "copy": "Copy message",
+      "edit": "Edit message",
+      "cancelEdit": "Cancel editing",
+      "sendEdit": "Send edited message",
+      "previousBranch": "Previous version",
+      "nextBranch": "Next version"
+    },
+    "threads": {
+      "untitled": "New conversation",
+      "empty": "Write your first message: the conversation will appear here.",
+      "rename": "Rename",
+      "archive": "Archive",
+      "delete": "Delete",
+      "deleteTitle": "Delete this conversation?",
+      "deleteBody": "Its messages will be deleted too.",
+      "deleteCancel": "Cancel",
+      "deleteConfirm": "Delete",
+      "archives": "Archives",
+      "archivesEmpty": "No archived conversations.",
+      "restore": "Restore",
+      "loading": "Loading…",
+      "yesterday": "Yesterday"
     }
   },
   "notFound": {

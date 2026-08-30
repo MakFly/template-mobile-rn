@@ -9,7 +9,8 @@ import { Text } from '@/shared/components/Text';
 
 /** Route name → icon of the shared tab icon set (same glyphs as the other shells). */
 const ROUTE_ICONS: Record<string, TabBarIconName> = {
-  index: 'home',
+  index: 'assistant',
+  threads: 'discussions',
   posts: 'posts',
   settings: 'settings',
 };
@@ -23,6 +24,7 @@ const ROUTE_ICONS: Record<string, TabBarIconName> = {
  */
 const ROUTE_HREFS: Record<string, Href> = {
   index: '/',
+  threads: '/threads' as Href,
   posts: '/posts',
   settings: '/settings',
 };
@@ -58,7 +60,7 @@ export function SidebarContent({ state, descriptors, navigation }: DrawerContent
           const focused = state.index === index;
           // `title` is always set by SidebarNav; route.name is a safe fallback.
           const label = descriptors[route.key]?.options.title ?? route.name;
-          const icon = ROUTE_ICONS[route.name] ?? 'home';
+          const icon = ROUTE_ICONS[route.name] ?? 'assistant';
           const tint = focused ? colors.primary : colors.textMuted;
 
           return (

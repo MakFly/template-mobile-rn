@@ -65,8 +65,7 @@ function EmptyState() {
           accessible={false}
           accessibilityElementsHidden
           importantForAccessibility="no-hide-descendants"
-          pointerEvents="none"
-          style={styles.scrollHint}
+          style={[styles.scrollHint, { pointerEvents: 'none' }]}
         >
           <AssistantIcon name="chevronRight" size={16} color={colors.textMuted} />
         </View>

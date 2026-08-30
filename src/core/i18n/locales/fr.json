@@ -1,6 +1,8 @@
 {
   "tabs": {
-    "home": "Accueil",
+    "home": "Assistant",
+    "assistant": "Assistant",
+    "threads": "Discussions",
     "posts": "Articles",
     "settings": "Réglages"
   },
@@ -36,7 +38,7 @@
       },
       "api": {
         "title": "Couche API minimale",
-        "body": "Un wrapper fetch avec timeout, une ApiError normalisée et le parsing à la frontière."
+        "body": "Un wrapper fetch avec timeout, des exceptions typées et le parsing à la frontière."
       },
       "tests": {
         "title": "Tests et qualité",
@@ -96,7 +98,29 @@
       "attachmentErrorBody": "Impossible de préparer cette image. Réessayez avec une autre photo."
     },
     "message": {
-      "retry": "Régénérer la réponse"
+      "retry": "Régénérer la réponse",
+      "copy": "Copier le message",
+      "edit": "Modifier le message",
+      "cancelEdit": "Annuler la modification",
+      "sendEdit": "Envoyer le message modifié",
+      "previousBranch": "Version précédente",
+      "nextBranch": "Version suivante"
+    },
+    "threads": {
+      "untitled": "Nouvelle discussion",
+      "empty": "Écrivez votre premier message : le fil apparaîtra ici.",
+      "rename": "Renommer",
+      "archive": "Archiver",
+      "delete": "Supprimer",
+      "deleteTitle": "Supprimer la discussion ?",
+      "deleteBody": "Cette action efface aussi ses messages.",
+      "deleteCancel": "Annuler",
+      "deleteConfirm": "Supprimer",
+      "archives": "Archives",
+      "archivesEmpty": "Aucune discussion archivée.",
+      "restore": "Restaurer",
+      "loading": "Chargement…",
+      "yesterday": "Hier"
     }
   },
   "notFound": {

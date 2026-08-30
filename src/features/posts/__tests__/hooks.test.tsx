@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react-native';
 import type { PropsWithChildren } from 'react';
 
-import { ApiError } from '@/core/api';
+import { HttpException } from '@/core/api';
 
 import { usePost, usePosts } from '../hooks';
 import { mockPosts } from '../mocks';
@@ -40,12 +40,12 @@ describe('usePost', () => {
     expect(result.current.data).toEqual(mockPosts[0]);
   });
 
-  it('surfaces a 404 ApiError for an unknown id', async () => {
+  it('surfaces a 404 HttpException for an unknown id', async () => {
     const { result } = await renderHook(() => usePost('9999'), { wrapper: createWrapper() });
 
     await waitFor(() => expect(result.current.isError).toBe(true));
-    expect(result.current.error).toBeInstanceOf(ApiError);
-    const error = result.current.error as ApiError;
+    expect(result.current.error).toBeInstanceOf(HttpException);
+    const error = result.current.error as HttpException;
     expect(error.status).toBe(404);
     expect(error.code).toBe('http');
   });

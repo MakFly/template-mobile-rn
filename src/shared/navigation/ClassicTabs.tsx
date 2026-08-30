@@ -28,8 +28,21 @@ export function ClassicTabs() {
       <Tabs.Screen
         name="index"
         options={{
-          title: t('tabs.home'),
-          tabBarIcon: ({ color, size }) => <TabBarIcon name="home" color={color} size={size} />,
+          title: t('tabs.assistant'),
+          tabBarIcon: ({ color, size }) => (
+            <TabBarIcon name="assistant" color={color} size={size} />
+          ),
+        }}
+      />
+      {/* Conversation route (/c/:id): reachable by URL/runtime, never a tab. */}
+      <Tabs.Screen name="c/[id]" options={{ href: null }} />
+      <Tabs.Screen
+        name="threads"
+        options={{
+          title: t('tabs.threads'),
+          tabBarIcon: ({ color, size }) => (
+            <TabBarIcon name="discussions" color={color} size={size} />
+          ),
         }}
       />
       <Tabs.Screen

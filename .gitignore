@@ -13,6 +13,7 @@ android/
 
 # tests
 coverage/
+server/data/
 
 # env files (keep .env.example versioned)
 .env*
@@ -20,9 +21,6 @@ coverage/
 
 # logs
 *.log
-npm-debug.*
-yarn-debug.*
-yarn-error.*
 
 # Native
 .kotlin/

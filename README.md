@@ -6,16 +6,18 @@ Template Expo (SDK 57, New Architecture) avec architecture feature-based.
 
 - expo-router + typed routes, TypeScript strict, alias `@/*` -> `src/*`
 - TanStack Query v5 (server state), Zustand v5 + persist (client state UI uniquement)
-- Wrapper fetch maison + zod (pas d'axios), react-native-mmkv v3 (façade `src/core/storage`)
+- Wrapper fetch maison + zod avec exceptions typées, logger transversal ASCII/ANSI,
+  react-native-mmkv v4 (façade `src/core/storage`)
 - i18next + react-i18next + expo-localization (en/fr), theming tokens TS maison
 - Env `EXPO_PUBLIC_*` validées par zod dans `src/core/env.ts` (fail fast au boot)
 
 ## Quickstart
 
 ```
-make setup    # npm ci + typegen (types expo-router)
+make setup    # bun install + typegen (types expo-router)
 make ios      # build dev-client + run sur simulateur iOS
 make dev      # dev server Expo (dev-client déjà installé)
+make web      # web ; mode headless automatique sur un serveur Linux
 ```
 
 `make help` liste toutes les cibles (setup, dev, qualité, tests, build, maintenance).
@@ -26,12 +28,17 @@ make dev      # dev server Expo (dev-client déjà installé)
 > `make android` (expo run) pour construire le dev-client. Les lancements
 > suivants se contentent de `make dev`.
 
+Sur Linux sans `DISPLAY` ni `WAYLAND_DISPLAY`, `make web` désactive
+automatiquement l'ouverture locale du navigateur et React Native DevTools. Le
+serveur reste disponible sur `http://localhost:8081` ; via SSH, utiliser par
+exemple `ssh -L 8081:localhost:8081 <hôte>` puis ouvrir cette URL localement.
+
 ## Structure
 
 ```
 src/
   app/       expo-router : layouts et écrans (fichiers = routes)
-  core/      api (fetch+zod, queryClient), env.ts, storage (MMKV), i18n, theme
+  core/      api (fetch+zod, exceptions, queryClient), logger, env, storage, i18n, theme
   shared/    components et hooks transverses, sans logique métier
   features/  posts, settings, ... (un dossier par domaine)
 ```
@@ -40,24 +47,18 @@ Règle de dépendance : `app -> features -> shared -> core`, jamais l'inverse,
 jamais feature -> feature. Ce qui doit être partagé entre deux features descend
 dans `shared/` ou `core/`.
 
-## Navigation layouts
+## Navigation sobre
 
-Quatre habillages de navigation, au choix dans Réglages → « Disposition de
-navigation » (persisté via le store settings, clé `layoutMode` en MMKV) :
+Quatre habillages de navigation restent disponibles dans Réglages, sans palette
+spécifique ni thème marketing :
 
-- **Onglets classiques** (`tabs`, défaut) — tab bar native en bas.
-- **Îlot flottant** (`island`) — pill flottante au-dessus du contenu
-  (`expo-router/ui` headless + `FloatingTabBar`).
-- **Panneau latéral** (`sidebar`) — drawer type ChatGPT en slide
-  (`expo-router/drawer`, vendorisé : aucun paquet `@react-navigation/*` à
-  installer), hamburger + swipe de bord.
-- **Assistant + discussions** (`assistant`) — fil natif
-  `@assistant-ui/react-native` + runtime AI SDK, avec historique des discussions
-  et liens de l'application dans un drawer latéral.
+- **Onglets classiques** (`tabs`, défaut) — barre native en bas.
+- **Îlot flottant** (`island`) — navigation compacte au-dessus du contenu.
+- **Panneau latéral** (`sidebar`) — drawer et navigation par geste.
+- **Assistant + discussions** (`assistant`) — drawer dédié aux fils persistés.
 
-Le switcher vit dans `src/app/(tabs)/_layout.tsx`, les shells dans
-`src/shared/navigation/`. Caveat : changer de disposition remonte l'arbre de
-navigation — l'état des écrans (scroll, pile posts) est réinitialisé.
+Tous utilisent le thème neutre commun et le même runtime assistant. Changer de
+disposition remonte la navigation, mais les discussions restent dans SQLite.
 
 ## Variables d'environnement
 
@@ -69,12 +70,32 @@ cp .env.example .env
   posts tourne sur ses mocks locaux (aucun appel réseau).
 - `EXPO_PUBLIC_CHAT_ENDPOINT_URL` — endpoint compatible avec le flux UI Message
   du Vercel AI SDK. Une URL absolue est requise sur iOS/Android. Sans valeur,
-  Assistant UI utilise `/api/chat`, pratique uniquement lorsqu'une route API
-  est servie avec l'application web.
+  l'app utilise le endpoint `/v1/chat` de l'API assistant.
+- `EXPO_PUBLIC_ASSISTANT_API_URL` — base de l'API Hono qui porte discussions,
+  messages et chat. Par défaut : `localhost:3333` sur web/iOS Simulator et
+  `10.0.2.2:3333` sur Android Emulator.
 - Toutes les variables `EXPO_PUBLIC_*` sont validées par zod dans
   `src/core/env.ts` et inlinées au build par Metro : redémarrer `make dev`
   après modification du `.env`. Aucun secret dans ces variables : elles sont
   embarquées en clair dans le bundle.
+
+## API assistant Hono/Bun
+
+Le dossier `server/` est un workspace TypeScript séparé, organisé en domaine,
+cas d'usage, ports et adapters. Il utilise `bun:sqlite` en WAL pour les fils et
+messages, Hono pour HTTP et AI SDK + OpenAI pour le streaming.
+
+```bash
+cp server/.env.example server/.env
+# renseigner OPENAI_API_KEY et OPENAI_MODEL uniquement côté serveur
+make api
+make web
+```
+
+Sans clé OpenAI, le CRUD des discussions fonctionne et `/v1/chat` répond 503
+avec `MODEL_NOT_CONFIGURED`. `X-Installation-Id`, généré dans MMKV, sépare les
+données locales mais ne remplace pas une authentification pour un déploiement
+public. `make check` vérifie désormais l'app et l'API.
 
 ## Ajouter une feature
 
@@ -90,12 +111,26 @@ cp .env.example .env
    depuis `src/app/_layout.tsx` — `core` n'importe jamais `features`.
 5. `make check` doit rester vert.
 
-## Scripts npm
+## Erreurs HTTP et logs
 
-- `npm run typegen` — régénère `.expo/types/router.d.ts` + `expo-env.d.ts`
+`apiFetch` transforme toutes les erreurs opérationnelles en sous-classes de
+`AppException` : configuration, réseau, timeout, annulation, statut HTTP et
+réponse invalide. Une `HttpException` conserve le statut et le corps JSON ou
+texte du backend pour permettre à la feature de décider quoi afficher, mais ce
+corps et les headers ne sont jamais écrits automatiquement dans les logs.
+
+Le logger de `@/core/logger` expose `debug`, `info`, `warn`, `error` et
+`child(scope)`. En développement, les appels HTTP produisent des lignes
+corrélées et colorées (`-->`, `<--`, `<x-`). En production, seuls `warn` et
+`error` restent actifs, sans couleur. Les métadonnées sensibles sont masquées ;
+utiliser un logger enfant plutôt que `console.*` dans les features.
+
+## Scripts Bun
+
+- `bun run typegen` — régénère `.expo/types/router.d.ts` + `expo-env.d.ts`
   (obligatoire sur checkout frais, avant le premier typecheck)
-- `npm run typecheck` — `tsc --noEmit`
-- `npm run lint` / `npm test` / `npm run test:coverage` / `npm run format`
+- `bun run typecheck` — `tsc --noEmit`
+- `bun run lint` / `bun run test` / `bun run test:coverage` / `bun run format`
 
 ## Ressources & profils Metro
 
@@ -119,7 +154,7 @@ heap a 8 Go, ou l'effet est reel.
 repart a pleine charge pendant que Xcode/Gradle compilent.
 
 `METRO_MAX_WORKERS` s'utilise aussi a la main devant n'importe quelle commande
-Expo (`METRO_MAX_WORKERS=8 npx expo export ...`). Valeur invalide -> retour a 4 ;
+Expo (`METRO_MAX_WORKERS=8 bunx expo export ...`). Valeur invalide -> retour a 4 ;
 valeur superieure au nombre de coeurs -> clampee.
 
 **Cache.** Expo place le cache transformer dans `os.tmpdir()/metro-cache` ; on le
@@ -128,10 +163,10 @@ gain est de la **persistance**, pas de la vitesse : macOS purge periodiquement
 `/var/folders`. Corollaire assume : `make clean-install` detruit ce cache.
 `make clean-cache` le purge a la demande, `make clean` purge en plus `.expo/cache`
 et `.expo/web` (jamais `.expo` en entier : `.expo/types/router.d.ts` porte les
-routes typees et son absence casse `npm run typecheck`).
+routes typees et son absence casse `bun run typecheck`).
 
 **Hygiene, pas gain : l'`exclude` du `tsconfig`.** C'est de l'**hygiene**, pas une
-optimisation : mesure a −1 % de RSS et −3 % de wall sur `npm run typecheck`, soit
+optimisation : mesure a −1 % de RSS et −3 % de wall sur `bun run typecheck`, soit
 **sous le bruit de mesure (~15 %)**. Il documente une intention, il n'accelere rien.
 
 **Pas de watchman ici, mais c'est une decision d'echelle, pas un dogme (mesure le
@@ -162,7 +197,7 @@ d'echelle Meta, pas d'un template de ~52 fichiers source. D'ou la decision : pas
 fichiers source), re-mesurer avant de conclure :
 
 ```bash
-DEBUG='Metro:Watcher' npx expo export --platform ios --output-dir /tmp/x --clear
+DEBUG='Metro:Watcher' bunx expo export --platform ios --output-dir /tmp/x --clear
 ```
 
 puis lire la ligne `Crawler "node" returned N added/modified`. Ne pas reintroduire watchman
@@ -181,7 +216,7 @@ raison : le `require.context` d'expo-router recoit simplement un contexte vide, 
 qui est un resultat valide pour Metro. Les deux seuls controles valables sont :
 
 1. le **compte de modules** affiche par le log Metro
-   (`npx expo export --platform ios 2>&1 | grep -i modules`) ;
+   (`bunx expo export --platform ios 2>&1 | grep -i modules`) ;
 2. un **diff d'ensembles de sources** entre les sourcemaps avant/apres
    (aucune source disparue, aucune apparue).
 

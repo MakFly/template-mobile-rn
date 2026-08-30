@@ -87,7 +87,7 @@ export function SceneBlurOverlay({ progress }: { progress: DrawerProgress }) {
       slide.get(),
       [0, BLUR_RAMP_END],
       [0, OPEN_BLUR_INTENSITY],
-      Extrapolation.CLAMP
+      Extrapolation.CLAMP,
     ),
   }));
 
@@ -184,6 +184,8 @@ export function SidebarNav() {
         }}
       >
         <Drawer.Screen name="index" options={{ title: t('tabs.home') }} />
+        <Drawer.Screen name="c/[id]" options={{ title: t('tabs.home') }} />
+        <Drawer.Screen name="threads" options={{ title: t('tabs.threads') }} />
         <Drawer.Screen
           name="posts"
           options={{

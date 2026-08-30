@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Platform, Pressable, StyleSheet, View, type ViewStyle } from 'react-native';
 import { BlurView } from 'expo-blur';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -42,20 +42,31 @@ export interface FloatingTabBarProps {
 export function FloatingTabBar({ items }: FloatingTabBarProps) {
   const { colors, radii, scheme } = useTheme();
   const insets = useSafeAreaInsets();
+  const shadowStyle: ViewStyle =
+    Platform.OS === 'web'
+      ? { boxShadow: `0 8px 18px ${colors.shadow}24` }
+      : {
+          shadowColor: colors.shadow,
+          shadowOpacity: 0.14,
+          shadowRadius: 18,
+          shadowOffset: { width: 0, height: 8 },
+        };
 
   return (
     <View
-      pointerEvents="box-none"
       // Hug the home indicator like the native bar; keep a small margin on
       // devices without one (insets.bottom === 0).
-      style={[styles.wrapper, { bottom: Math.max(insets.bottom, spacing.md) }]}
+      style={[
+        styles.wrapper,
+        { bottom: Math.max(insets.bottom, spacing.md), pointerEvents: 'box-none' },
+      ]}
     >
       {/*
         Two layers on purpose: the outer view carries the shadow (which
         `overflow: 'hidden'` would clip), the blurred view carries the rounded
         material and clips it.
       */}
-      <View style={[styles.shadow, { borderRadius: radii.full, shadowColor: colors.shadow }]}>
+      <View style={[shadowStyle, { borderRadius: radii.full }]}>
         <BlurView
           intensity={scheme === 'dark' ? 40 : 60}
           tint={scheme}
@@ -67,8 +78,10 @@ export function FloatingTabBar({ items }: FloatingTabBarProps) {
             readable in both cases.
           */}
           <View
-            pointerEvents="none"
-            style={[StyleSheet.absoluteFill, { backgroundColor: colors.surfaceGlass }]}
+            style={[
+              StyleSheet.absoluteFill,
+              { backgroundColor: colors.surfaceGlass, pointerEvents: 'none' },
+            ]}
           />
           {items.map((item) => (
             <TabTrigger key={item.name} name={item.name} asChild>
@@ -124,10 +137,13 @@ function IslandTabItem({
       style={styles.item}
     >
       <Animated.View
-        pointerEvents="none"
         style={[
           styles.indicator,
-          { backgroundColor: colors.surfaceAlt, borderRadius: radii.full },
+          {
+            backgroundColor: colors.surfaceAlt,
+            borderRadius: radii.full,
+            pointerEvents: 'none',
+          },
           indicatorStyle,
         ]}
       />
@@ -145,12 +161,6 @@ const styles = StyleSheet.create({
     left: spacing.xl,
     right: spacing.xl,
     alignItems: 'center',
-  },
-  shadow: {
-    // Elevation convention: color from the theme, opacity/offset per component.
-    shadowOpacity: 0.14,
-    shadowRadius: 18,
-    shadowOffset: { width: 0, height: 8 },
   },
   pill: {
     flexDirection: 'row',
@@ -181,6 +191,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    marginHorizontal: spacing.xs,
+    marginHorizontal: 0,
   },
 });

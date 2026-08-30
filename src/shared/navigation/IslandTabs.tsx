@@ -25,7 +25,8 @@ export function IslandTabs() {
   const insets = useSafeAreaInsets();
 
   const items: FloatingTabBarItem[] = [
-    { name: 'index', icon: 'home', label: t('tabs.home') },
+    { name: 'index', icon: 'assistant', label: t('tabs.assistant') },
+    { name: 'threads', icon: 'discussions', label: t('tabs.threads') },
     { name: 'posts', icon: 'posts', label: t('tabs.posts') },
     { name: 'settings', icon: 'settings', label: t('tabs.settings') },
   ];
@@ -37,8 +38,13 @@ export function IslandTabs() {
       </ContentBottomInsetProvider>
       <TabList style={styles.hiddenTabList}>
         <TabTrigger name="index" href="/" />
+        <TabTrigger name="threads" href="/threads" />
         <TabTrigger name="posts" href="/posts" />
         <TabTrigger name="settings" href="/settings" />
+        {/* Headless tabs only mount routes declared by a trigger; this one
+            exists so /c/:id is part of the navigator, without a visible tab
+            (FloatingTabBar renders `items` only). */}
+        <TabTrigger name="conversation" href={{ pathname: '/c/[id]', params: { id: 'new' } }} />
       </TabList>
       <FloatingTabBar items={items} />
     </Tabs>

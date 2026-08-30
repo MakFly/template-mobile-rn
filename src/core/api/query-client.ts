@@ -1,12 +1,17 @@
 import { QueryClient } from '@tanstack/react-query';
 
-import { ApiError } from './errors';
+import { HttpException, isAppException } from './errors';
 
 function isRetryable(error: unknown): boolean {
-  if (error instanceof ApiError) {
-    // 4xx will fail the same way on retry; config/parse/abort are not transient.
-    if (error.status !== undefined && error.status >= 400 && error.status < 500) return false;
-    if (error.code === 'config' || error.code === 'parse' || error.code === 'aborted') return false;
+  if (isAppException(error)) {
+    if (error instanceof HttpException && error.status >= 400 && error.status < 500) return false;
+    if (
+      error.code === 'configuration' ||
+      error.code === 'response_parse' ||
+      error.code === 'aborted'
+    ) {
+      return false;
+    }
   }
   return true;
 }

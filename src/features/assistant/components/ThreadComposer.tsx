@@ -11,7 +11,9 @@ import * as ImagePicker from 'expo-image-picker';
 import { useTranslation } from 'react-i18next';
 
 import { useTheme } from '@/core/theme';
+import { logger } from '@/core/logger';
 import { AssistantIcon } from '@/features/assistant/components/AssistantIcon';
+import { haptics } from '@/shared/lib/haptics';
 
 const MAX_IMAGE_ATTACHMENTS = 4;
 
@@ -35,6 +37,7 @@ function AttachmentPreview() {
       ) : null}
       <AttachmentPrimitive.Remove
         accessibilityLabel={t('assistant.composer.removeAttachment')}
+        onPressIn={haptics.light}
         style={styles.removeAttachment}
       >
         <View style={[styles.removeBadge, { backgroundColor: colors.primary }]}>
@@ -81,7 +84,7 @@ function AttachButton() {
         });
       }
     } catch (error) {
-      console.error('[assistant] Unable to attach selected image', error);
+      logger.child('assistant').error('Unable to attach selected image', { error });
       Alert.alert(
         t('assistant.composer.attachmentErrorTitle'),
         t('assistant.composer.attachmentErrorBody'),
@@ -95,6 +98,7 @@ function AttachButton() {
       accessibilityLabel={t('assistant.composer.addImage')}
       disabled={isDisabled}
       hitSlop={6}
+      onPressIn={haptics.selection}
       onPress={() => void pickImages()}
       style={({ pressed }) => [
         styles.secondaryAction,
@@ -115,15 +119,23 @@ function SendButton() {
   return (
     <ComposerPrimitive.Send
       accessibilityLabel={t('assistant.composer.send')}
-      style={[
+      onPressIn={() => canSend && haptics.success()}
+      style={({ pressed }) => [
         styles.primaryAction,
         {
-          backgroundColor: colors.primary,
-          opacity: canSend ? 1 : 0.3,
+          backgroundColor: canSend
+            ? pressed
+              ? colors.primaryPressed
+              : colors.primary
+            : colors.surfaceAlt,
         },
       ]}
     >
-      <AssistantIcon name="send" size={19} color={colors.onPrimary} />
+      <AssistantIcon
+        name="send"
+        size={18}
+        color={canSend ? colors.onPrimary : colors.textMuted}
+      />
     </ComposerPrimitive.Send>
   );
 }
@@ -135,9 +147,10 @@ function CancelButton() {
   return (
     <ComposerPrimitive.Cancel
       accessibilityLabel={t('assistant.composer.stop')}
+      onPressIn={haptics.light}
       style={[styles.primaryAction, { backgroundColor: colors.primary }]}
     >
-      <AssistantIcon name="stop" size={13} color={colors.onPrimary} />
+      <AssistantIcon name="stop" size={15} color={colors.onPrimary} />
     </ComposerPrimitive.Cancel>
   );
 }
@@ -217,13 +230,13 @@ const styles = StyleSheet.create({
   },
   input: {
     width: '100%',
-    minHeight: 40,
-    maxHeight: 168,
+    minHeight: 28,
+    maxHeight: 132,
     paddingHorizontal: 10,
-    paddingTop: 8,
-    paddingBottom: 4,
+    paddingTop: 6,
+    paddingBottom: 2,
     fontSize: 16,
-    lineHeight: 24,
+    lineHeight: 22,
     ...Platform.select({
       web: { outlineStyle: 'none' } as never,
       default: {},
@@ -265,9 +278,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   secondaryAction: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -275,13 +288,13 @@ const styles = StyleSheet.create({
     opacity: 0.35,
   },
   primaryActionSlot: {
-    width: 36,
-    height: 36,
+    width: 32,
+    height: 32,
   },
   primaryAction: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
   },

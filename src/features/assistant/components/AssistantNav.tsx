@@ -2,13 +2,12 @@ import { useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { Drawer, DrawerToggleButton } from 'expo-router/drawer';
 import { useRouter } from 'expo-router';
-import { AssistantRuntimeProvider, useAui } from '@assistant-ui/react-native';
+import { useAui } from '@assistant-ui/react-native';
 import { useTranslation } from 'react-i18next';
 
 import { useTheme } from '@/core/theme';
 import { AssistantDrawerContent } from '@/features/assistant/components/AssistantDrawerContent';
 import { AssistantIcon } from '@/features/assistant/components/AssistantIcon';
-import { useAssistantRuntime } from '@/features/assistant/hooks/useAssistantRuntime';
 import {
   DrawerProgressBridge,
   SceneBlurOverlay,
@@ -80,6 +79,14 @@ function AssistantDrawer() {
             headerRight: () => <NewThreadButton />,
           }}
         />
+        <Drawer.Screen
+          name="c/[id]"
+          options={{
+            title: t('assistant.title'),
+            headerTitle: t('assistant.title'),
+            headerRight: () => <NewThreadButton />,
+          }}
+        />
         <Drawer.Screen name="posts" options={{ title: t('tabs.posts'), headerShown: false }} />
         <Drawer.Screen name="settings" options={{ title: t('tabs.settings') }} />
       </Drawer>
@@ -89,11 +96,5 @@ function AssistantDrawer() {
 }
 
 export function AssistantNav() {
-  const runtime = useAssistantRuntime();
-
-  return (
-    <AssistantRuntimeProvider runtime={runtime}>
-      <AssistantDrawer />
-    </AssistantRuntimeProvider>
-  );
+  return <AssistantDrawer />;
 }

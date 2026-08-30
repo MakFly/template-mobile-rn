@@ -29,7 +29,7 @@ config.maxWorkers =
 //
 //    On REUTILISE la classe du store instancie par Expo (`BinaryFileStore`) au lieu
 //    d'importer `metro-cache` : (a) `metro-cache` est hoiste mais non declare ici,
-//    donc un arbre npm resolu autrement casserait le bundler au demarrage ;
+//    donc un arbre de dependances resolu autrement casserait le bundler au demarrage ;
 //    (b) le `FileStore` vanilla ecrit avec un `writeFile` direct, alors que le store
 //    d'Expo ecrit en tmp + rename (retry EPERM/EBUSY) et unlink une entree corrompue
 //    a la lecture — deux Metro concurrents (`make dev` + un `expo export`) ne peuvent

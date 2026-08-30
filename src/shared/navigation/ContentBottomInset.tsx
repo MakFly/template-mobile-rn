@@ -14,10 +14,7 @@ export interface ContentBottomInsetProviderProps extends PropsWithChildren {
   value: number;
 }
 
-export function ContentBottomInsetProvider({
-  value,
-  children,
-}: ContentBottomInsetProviderProps) {
+export function ContentBottomInsetProvider({ value, children }: ContentBottomInsetProviderProps) {
   return (
     <ContentBottomInsetContext.Provider value={value}>
       {children}

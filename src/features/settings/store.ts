@@ -10,6 +10,12 @@ export type LocalePreference = 'system' | 'en' | 'fr';
 /** Root navigation layout, including the Assistant UI thread drawer. */
 export type LayoutMode = 'tabs' | 'island' | 'sidebar' | 'assistant';
 
+const LAYOUT_MODES: readonly LayoutMode[] = ['tabs', 'island', 'sidebar', 'assistant'];
+
+function isLayoutMode(value: unknown): value is LayoutMode {
+  return typeof value === 'string' && LAYOUT_MODES.includes(value as LayoutMode);
+}
+
 export interface SettingsState {
   themePreference: ThemePreference;
   locale: LocalePreference;
@@ -47,6 +53,14 @@ export const useSettingsStore = create<SettingsState>()(
         locale: state.locale,
         layoutMode: state.layoutMode,
       }),
+      merge: (persisted, current) => {
+        const saved = (persisted ?? {}) as Partial<PersistedSettings>;
+        return {
+          ...current,
+          ...saved,
+          layoutMode: isLayoutMode(saved.layoutMode) ? saved.layoutMode : 'tabs',
+        };
+      },
     },
   ),
 );

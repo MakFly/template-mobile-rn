@@ -5,12 +5,13 @@ import { SymbolView, type SFSymbol } from 'expo-symbols';
 // expo-symbols est déjà présent (dépendance d'expo-router) : SF Symbols natifs sur iOS,
 // glyphe texte en fallback sur Android/web.
 const ICONS: Record<string, { sf: SFSymbol; glyph: string }> = {
-  home: { sf: 'house.fill', glyph: '⌂' },
+  assistant: { sf: 'sparkles', glyph: '✦' },
   posts: { sf: 'list.bullet', glyph: '☰' },
   settings: { sf: 'gearshape.fill', glyph: '⚙' },
+  discussions: { sf: 'text.bubble.fill', glyph: '◫' },
 };
 
-export type TabBarIconName = 'home' | 'posts' | 'settings';
+export type TabBarIconName = 'assistant' | 'posts' | 'settings' | 'discussions';
 
 export interface TabBarIconProps {
   name: TabBarIconName;

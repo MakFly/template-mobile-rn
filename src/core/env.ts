@@ -19,11 +19,16 @@ const envSchema = z.object({
     .union([z.literal(''), z.url()])
     .optional()
     .transform((value) => (value === '' ? undefined : value)),
+  EXPO_PUBLIC_ASSISTANT_API_URL: z
+    .union([z.literal(''), z.url()])
+    .optional()
+    .transform((value) => (value === '' ? undefined : value)),
 });
 
 const parsed = envSchema.safeParse({
   EXPO_PUBLIC_API_URL: process.env.EXPO_PUBLIC_API_URL,
   EXPO_PUBLIC_CHAT_ENDPOINT_URL: process.env.EXPO_PUBLIC_CHAT_ENDPOINT_URL,
+  EXPO_PUBLIC_ASSISTANT_API_URL: process.env.EXPO_PUBLIC_ASSISTANT_API_URL,
 });
 
 if (!parsed.success) {

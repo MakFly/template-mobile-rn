@@ -14,5 +14,5 @@
   "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"],
   // NB : ne JAMAIS exclure ".expo" — ".expo/types/**" porte les routes typées
   // expo-router référencées par "include" ci-dessus.
-  "exclude": ["node_modules", "ios", "android", "dist", "web-build", "coverage"]
+  "exclude": ["node_modules", "server", "ios", "android", "dist", "web-build", "coverage"]
 }

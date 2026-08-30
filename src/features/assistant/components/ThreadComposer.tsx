@@ -201,6 +201,9 @@ export function ThreadComposer() {
           multiline
           maxLength={4000}
           enterKeyHint="send"
+          autoCorrect={false}
+          spellCheck={false}
+          smartInsertDelete={false}
           placeholder={t('assistant.composer.placeholder')}
           placeholderTextColor={colors.textMuted}
           style={[styles.input, { color: colors.text }]}

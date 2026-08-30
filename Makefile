@@ -4,11 +4,11 @@
 .DEFAULT_GOAL := help
 SHELL := /bin/bash
 
-.PHONY: help setup doctor clean-install dev ios android web \
+.PHONY: help setup doctor clean-install dev dev-fast dev-debug ios android web \
 	lint format format-check typecheck check \
 	test test-watch test-coverage \
 	prebuild build-ios build-android \
-	clean upgrade
+	clean clean-cache upgrade
 
 help: ## Affiche cette aide
 	@awk 'BEGIN { FS = ":.*##" } \
@@ -31,14 +31,24 @@ clean-install: ## Reinstallation propre (rm -rf node_modules + npm ci)
 
 ##@ DEV
 
-dev: ## Lance le dev server Expo
-	npx expo start
+# Profils de ressources : METRO_MAX_WORKERS est lu par metro.config.js. On ne pose
+# PAS de NODE_OPTIONS ailleurs que sur dev-fast : sur un poste 48 Go le heap V8 par
+# defaut vaut deja ~4144 Mo, donc --max-old-space-size=4096 ne borne rien et serait
+# hérité par tous les node enfants (y compris ceux lances par Xcode via `make ios`).
+dev: ## Lance le dev server Expo (profil sobre : 4 workers)
+	METRO_MAX_WORKERS=4 npx expo start
 
-ios: ## Build + run sur simulateur iOS
-	npx expo run:ios
+dev-fast: ## Dev server pleine charge (10 workers, heap 8 Go) — Metro seul au premier plan
+	METRO_MAX_WORKERS=10 NODE_OPTIONS=--max-old-space-size=8192 npx expo start
 
-android: ## Build + run sur emulateur Android
-	npx expo run:android
+dev-debug: ## Dev server mono-worker (transformation in-band, stack traces lisibles)
+	METRO_MAX_WORKERS=1 npx expo start
+
+ios: ## Build + run sur simulateur iOS (bundler en profil sobre)
+	METRO_MAX_WORKERS=4 npx expo run:ios
+
+android: ## Build + run sur emulateur Android (bundler en profil sobre)
+	METRO_MAX_WORKERS=4 npx expo run:android
 
 web: ## Lance le dev server en mode web
 	npx expo start --web
@@ -85,9 +95,13 @@ build-android: ## Build EAS Android (requiert eas.json + compte EAS)
 
 ##@ MAINTENANCE
 
-clean: ## Purge caches (.expo, cache metro, watchman)
-	rm -rf .expo node_modules/.cache
-	command -v watchman >/dev/null 2>&1 && watchman watch-del-all || true
+clean: ## Purge caches (.expo/cache, .expo/web, node_modules/.cache)
+# On ne supprime PAS .expo en entier : .expo/types/router.d.ts porte les routes
+# typees expo-router et son absence casse `npm run typecheck`.
+	rm -rf .expo/cache .expo/web node_modules/.cache
+
+clean-cache: ## Purge les seuls caches transformer (metro + jest)
+	rm -rf node_modules/.cache/metro node_modules/.cache/jest
 
 upgrade: ## Aligne les deps sur le SDK Expo (expo install --fix)
 	npx expo install --fix
